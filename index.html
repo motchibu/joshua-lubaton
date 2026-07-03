@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSIT Aviation Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================================
+           CSS VARIABLES & GLOBAL STYLES
+        ========================================================= */
+        :root {
+            /* Color Palette */
+            --navy-blue: #0A192F;
+            --sky-blue: #4FA8D1;
+            --white: #FFFFFF;
+            --silver: #E0E0E0;
+            --black: #050505;
+            
+            /* Glassmorphism Variables */
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --blur: blur(16px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--navy-blue) 0%, #112A46 50%, var(--sky-blue) 100%);
+            background-attachment: fixed;
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Hide scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--navy-blue); }
+        ::-webkit-scrollbar-thumb { background: var(--sky-blue); border-radius: 10px; }
+
+        /* =========================================================
+           BACKGROUND ELEMENTS (CLOUDS & AIRPLANE)
+        ========================================================= */
+        .bg-animations {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Floating Clouds */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            filter: blur(20px);
+            animation: floatClouds 40s linear infinite;
+        }
+        .cloud-1 { top: 15%; left: -20%; width: 300px; height: 100px; animation-duration: 45s; }
+        .cloud-2 { top: 50%; left: -30%; width: 400px; height: 120px; animation-duration: 60s; animation-delay: -15s; }
+        .cloud-3 { top: 80%; left: -20%; width: 250px; height: 80px; animation-duration: 35s; animation-delay: -5s; }
+
+        @keyframes floatClouds {
+            0% { transform: translateX(-100px); opacity: 0.2; }
+            50% { opacity: 0.5; }
+            100% { transform: translateX(110vw); opacity: 0.2; }
+        }
+
+        /* Flying Airplane Background */
+        .flying-plane {
+            position: absolute;
+            top: 20%;
+            left: -10%;
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.15);
+            animation: flyAcross 25s linear infinite;
+        }
+
+        @keyframes flyAcross {
+            0% { transform: translateX(-100px) translateY(0) rotate(15deg); }
+            50% { transform: translateX(50vw) translateY(-50px) rotate(15deg); }
+            100% { transform: translateX(110vw) translateY(-100px) rotate(15deg); }
+        }
+
+        /* =========================================================
+           UTILITIES (GLASSMORPHISM & ANIMATIONS)
+        ========================================================= */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 24px;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section {
+            padding: 100px 10%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--white);
+            text-shadow: 0 2px 10px rgba(255,255,255,0.2);
+        }
+        .section-title i {
+            color: var(--sky-blue);
+            margin-right: 10px;
+        }
+
+        /* =========================================================
+           NAVIGATION BAR
+        ========================================================= */
+        .navbar-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 25px;
+            border-radius: 50px; /* Pill shape */
+        }
+
+        .nav-link {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+
+        /* =========================================================
+           HERO SECTION
+        ========================================================= */
+        #home {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            padding-top: 150px;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero-greeting {
+            font-size: 1.2rem;
+            color: var(--sky-blue);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .hero-name {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #fff, var(--silver));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-course {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: var(--silver);
+        }
+
+        .typewriter-container {
+            font-size: 1.2rem;
+            height: 30px;
+            margin-bottom: 30px;
+            color: var(--sky-blue);
+        }
+
+        .hero-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid var(--sky-blue);
+            background: rgba(79, 168, 209, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .hero-btn:hover {
+            background: var(--sky-blue);
+            color: var(--navy-blue);
+            box-shadow: 0 0 20px rgba(79, 168, 209, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .profile-pic {
+            width: 350px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 50%; /* Circle shape */
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 40px rgba(79, 168, 209, 0.3);
+            transition: transform 0.5s ease;
+        }
+
+        .hero-image:hover .profile-pic {
+            transform: scale(1.05);
+        }
+
+        /* =========================================================
+           ABOUT SECTION
+        ========================================================= */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .about-card {
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .about-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .about-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--sky-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .about-card p, .about-card ul {
+            font-size: 1rem;
+            color: var(--silver);
+            line-height: 1.7;
+        }
+        
+        .about-card ul {
+            list-style-type: none;
+        }
+        
+        .about-card ul li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .about-card ul li::before {
+            content: '\f0fb'; /* Plane icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--sky-blue);
+            font-size: 0.8rem;
+            top: 4px;
+        }
+
+        /* =========================================================
+           SKILLS SECTION
+        ========================================================= */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .skill-category {
+            padding: 30px;
+        }
+
+        .skill-category h3 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .skill-item {
+            margin-bottom: 20px;
+        }
+
+        .skill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--silver);
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--sky-blue), #ffffff);
+            border-radius: 10px;
+            width: 0; /* Will be set by JS for animation */
+            transition: width 1.5s cubic-bezier(0.1, 0.5, 0.1, 1);
+        }
+
+        /* =========================================================
+           CONTACTS SECTION
+        ========================================================= */
+        .contacts-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .contact-card {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(79, 168, 209, 0.4);
+            border-color: var(--sky-blue);
+        }
+
+        .contact-card i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            transition: transform 0.4s ease;
+        }
+
+        .contact-card:hover i {
+            transform: scale(1.2);
+            color: var(--sky-blue);
+        }
+
+        .contact-card span {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+        footer {
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid var(--glass-border);
+            border-radius: 30px 30px 0 0;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+        }
+
+        footer p {
+            color: var(--silver);
+            font-size: 0.9rem;
+        }
+        
+        footer i {
+            color: var(--sky-blue);
+            margin: 0 5px;
+        }
+
+        /* =========================================================
+           SCROLL TO TOP BUTTON
+        ========================================================= */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            color: var(--white);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        #scrollTopBtn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #scrollTopBtn:hover {
+            background: var(--sky-blue);
+            color: var(--navy-blue);
+            transform: translateY(-5px);
+        }
+
+        /* =========================================================
+           RESPONSIVE DESIGN
+        ========================================================= */
+        @media (max-width: 992px) {
+            #home { flex-direction: column-reverse; text-align: center; padding-top: 120px; }
+            .hero-name { font-size: 3rem; }
+            .about-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 10px; }
+            .nav-link { font-size: 0.8rem; padding: 6px 10px; }
+            .profile-pic { width: 250px; height: 250px; }
+            section { padding: 80px 5%; }
+            .hero-name { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animations">
+        <i class="fa-solid fa-plane flying-plane"></i>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+    </div>
+
+    <div class="navbar-container">
+        <nav class="navbar glass-panel">
+            <a href="#home" class="nav-link active">Home</a>
+            <a href="#about" class="nav-link">About Me</a>
+            <a href="#skills" class="nav-link">Skills</a>
+            <a href="#contacts" class="nav-link">Contacts</a>
+        </nav>
+    </div>
+
+    <section id="home">
+        <div class="hero-content reveal">
+            <div class="hero-greeting">Welcome aboard, I am</div>
+            
+            <h1 class="hero-name">Joshua C. Lubaton</h1>
+            
+            <h2 class="hero-course">BSIT Aviation Student @ St. Alexius College Inc.</h2>
+            
+            <div class="typewriter-container">
+                <span id="typewriter"></span><span class="cursor">|</span>
+            </div>
+            
+            <p style="color: var(--silver); margin-bottom: 30px; font-size: 1.1rem; max-width: 500px;">
+                Merging the precision of aviation with the innovation of Information Technology. Passionate about flight systems, software development, and the future of aerospace tech.
+            </p>
+            
+            <a href="#contacts" class="hero-btn nav-link-btn"><i class="fa-solid fa-paper-plane"></i> Let's Connect</a>
+        </div>
+        
+        <div class="hero-image reveal">
+            <img src="lubaton.jpg" class="profile-pic">
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title reveal"><i class="fa-solid fa-user-astronaut"></i> About Me</h2>
+        
+        <div class="about-grid">
+            <div class="about-card glass-panel reveal">
+                <h3><i class="fa-solid fa-address-card"></i> Biography</h3>
+                <p>Hi, my name is Joshua C. Lubaton. I am 19 years old and currently a second-year Bachelor of Science in Information Technology (BSIT)- Aviation student at St. Alexius College. My biggest dream is to become a pilot and fly aircraft professionally. Outside of my studies, I enjoy playing sports such as badminton, volleyball, and arnis. I also like spending my free time watching movies and anime. I am a hardworking and determined person who is always striving to improve my skills and move closer to achieving my dream of becoming a successful pilot.</p>
+            </div>
+
+            <div class="about-card glass-panel reveal">
+                <h3><i class="fa-solid fa-graduation-cap"></i> Education</h3>
+                <ul>
+                    <li><strong>Bachelor of Science in Information Technology (Aviation)</strong><br>St. Alexius College Inc. (Present)</li>
+                </ul>
+            </div>
+
+            <div class="about-card glass-panel reveal">
+                <h3><i class="fa-solid fa-plane-departure"></i> Aviation Interests</h3>
+                <ul>
+                    <li>Flight Simulation & Flying</li>
+                </ul>
+            </div>
+
+            <div class="about-card glass-panel reveal">
+                <h3><i class="fa-solid fa-crosshairs"></i> Career Goals</h3>
+                <p>My biggest dream is to become a pilot and fly aircraft professionally.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title reveal"><i class="fa-solid fa-laptop-code"></i> My Skills</h2>
+        
+        <div class="skills-grid">
+            
+            <div class="skill-category glass-panel reveal">
+                <h3>Programming</h3>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>HTML / CSS</span><span>90%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="90%"></div></div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>JavaScript</span><span>80%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="80%"></div></div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>Python</span><span>75%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="75%"></div></div>
+                </div>
+            </div>
+
+            <div class="skill-category glass-panel reveal">
+                <h3>IT Systems</h3>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>Networking (Cisco)</span><span>85%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="85%"></div></div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>Database Management</span><span>70%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="70%"></div></div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>Cybersecurity Basics</span><span>65%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="65%"></div></div>
+                </div>
+            </div>
+
+            <div class="skill-category glass-panel reveal">
+                <h3>Aviation & Avionics</h3>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>Flight Simulation (MSFS/X-Plane)</span><span>95%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="95%"></div></div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>Avionics Systems Familiarity</span><span>80%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="80%"></div></div>
+                </div>
+                
+                <div class="skill-item">
+                    <div class="skill-info"><span>Air Traffic Radio Comms</span><span>75%</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" data-width="75%"></div></div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="contacts">
+        <h2 class="section-title reveal"><i class="fa-solid fa-satellite-dish"></i> Radar Contact</h2>
+        
+        <div class="contacts-wrapper">
+            <a href="https://www.instagram.com/lubaton.pogi?igsh=MTB4ZHNtcGJ4eTZt" class="contact-card glass-panel reveal" target="_blank">
+                <i class="fa-brands fa-instagram"></i>
+                <span>@lubaton.pogi</span>
+            </a>
+
+            <a href="https://www.facebook.com/joshua.c.lubaton" class="contact-card glass-panel reveal" target="_blank">
+                <i class="fa-brands fa-facebook-f"></i>
+                <span>Joshua C. Lubaton</span>
+            </a>
+
+            <a href="tel:+63 9855711343" class="contact-card glass-panel reveal">
+                <i class="fa-solid fa-phone"></i>
+                <span>+63 9855711343</span>
+            </a>
+        </div>
+    </section>
+
+    <footer class="glass-panel">
+        <p>&copy; 2026 Joshua C. Lubaton<i class="fa-solid fa-plane"></i> </p>
+    </footer>
+
+    <button id="scrollTopBtn"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+       
+        const clickSound = new Audio('soundlubaton.mp3');
+        clickSound.volume = 0.5;
+
+    
+        const interactiveElements = document.querySelectorAll('.nav-link, .hero-btn, .contact-card');
+        interactiveElements.forEach(el => {
+            el.addEventListener('click', () => {
+                
+                clickSound.currentTime = 0; 
+                
+                clickSound.play().catch(err => console.log("Audio play prevented by browser policy until user interacts."));
+            });
+        });
+
+       
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    
+                    // Trigger Progress Bars if inside Skills Section
+                    if(entry.target.classList.contains('skill-category')) {
+                        const bars = entry.target.querySelectorAll('.progress-bar-fill');
+                        bars.forEach(bar => {
+                            const width = bar.getAttribute('data-width');
+                            bar.style.width = width;
+                        });
+                    }
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, { threshold: 0.15 }); // Triggers when 15% of element is visible
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // ---------------------------------------------------------
+        // 3. TYPING ANIMATION (Hero Section)
+        // ---------------------------------------------------------
+        /* EDIT HERE: Change the words you want to type out here */
+        const textArray = ["Flight Simulation.", "Pilot skills."];
+        let textIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingElement = document.getElementById("typewriter");
+
+        function typeEffect() {
+            const currentText = textArray[textIndex];
+            
+            if (isDeleting) {
+                typingElement.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingElement.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typingSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex === currentText.length) {
+                typingSpeed = 2000; // Pause at end of word
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % textArray.length;
+                typingSpeed = 500; // Pause before next word
+            }
+
+            setTimeout(typeEffect, typingSpeed);
+        }
+        
+        // Start typing effect on load
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(typeEffect, 1000);
+            
+            // Trigger home section reveal immediately
+            document.querySelector('.hero-content').classList.add('active');
+            document.querySelector('.hero-image').classList.add('active');
+        });
+
+        // ---------------------------------------------------------
+        // 4. ACTIVE NAVIGATION LINK UPDATER
+        // ---------------------------------------------------------
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.navbar .nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // ---------------------------------------------------------
+        // 5. SCROLL TO TOP BUTTON
+        // ---------------------------------------------------------
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+        window.addEventListener("scroll", () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add("visible");
+            } else {
+                scrollTopBtn.classList.remove("visible");
+            }
+        });
+
+        scrollTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+            // Play click sound
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => {});
+        });
+
+    </script>
+</body>
+</html>
